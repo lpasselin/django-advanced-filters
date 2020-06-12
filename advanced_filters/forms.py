@@ -97,6 +97,11 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
             return {formdata['field']: True}
         elif formdata['operator'] == "isfalse":
             return {formdata['field']: False}
+
+        if formdata['field'] == "TaskResults":
+            task_label, question_label, value = formdata['value'].split(":")[1:]
+            formdata['value'] = value
+            key = f"{formdata['field']}__{task_label}__{question_label}__{formdata['operator']}"
         return {key: formdata['value']}
 
     @staticmethod
@@ -140,11 +145,15 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
             else:
                 query_data['operator'] = operator  # default
 
+        print(f"advanced_filters: {query_data['field']}")
         if isinstance(query_data.get('value'),
                       list) and query_data['operator'] == 'range':
             date_from = date_to_string(query_data.get('value_from'))
             date_to = date_to_string(query_data.get('value_to'))
             query_data['value'] = ','.join([date_from, date_to])
+        elif isinstance(query_data.get('value'),
+                      list) and query_data['field'] == "TaskResults":
+            print(f"advanced_filters: {query_data['field']} with value {query_data['value']}")
 
         return query_data
 
