@@ -100,8 +100,8 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
 
         if formdata['field'] == "taskresultats":
             print(formdata['value'])
-            task_label, question_label, value = formdata['value'].split(":")
-            key = f"{formdata['field']}__{task_label}__{question_label}__{formdata['operator']}"
+            _, question_label, value = formdata['value'].split(":")
+            key = f"{formdata['field']}__{question_label}__{formdata['operator']}"
         return {key: value}
 
     @staticmethod
@@ -181,8 +181,18 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         """ Returns a Q object from the submitted form """
         query = Q()  # initial is an empty query
         query_dict = self._build_query_dict(self.cleaned_data)
+
+        if self.cleaned_data["field"] == "taskresultats":
+            # if taskresultats, make sure we apply operation on the specified TaskResult
+            formdata = self.cleaned_data
+            task_label, _, _ = formdata['value'].split(":")
+            key = f"{formdata['field']}__definition__label"
+            value = task_label
+            query = query & Q(**{key: value})
+
         if 'negate' in self.cleaned_data and self.cleaned_data['negate']:
-            query = query & ~Q(**query_dict)
+            # query = query & ~Q(**query_dict)
+            query = ~query
         else:
             query = query & Q(**query_dict)
         return query
