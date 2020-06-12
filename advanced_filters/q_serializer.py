@@ -45,6 +45,7 @@ class QSerializer(object):
         return qtuple[0].endswith("__range") and len(qtuple[1]) == 2
 
     def prepare_value(self, qtuple):
+        print(qtuple)
         if self._is_range(qtuple):
             qtuple[1][0] = qtuple[1][0] or min_ts
             qtuple[1][1] = qtuple[1][1] or max_ts
