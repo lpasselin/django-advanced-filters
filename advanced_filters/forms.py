@@ -101,7 +101,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         if formdata['field'] == "taskresultats":
             print(formdata['value'])
             _, question_label, value = formdata['value'].split(":")
-            key = f"{formdata['field']}__{question_label}__{formdata['operator']}"
+            key = f"{formdata['field']}__data__{question_label}__{formdata['operator']}"
         return {key: value}
 
     @staticmethod
