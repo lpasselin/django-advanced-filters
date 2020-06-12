@@ -125,6 +125,8 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
                 field = query_data['field']
 
         query_data['field'] = field
+        if query_data['field'].startswith("taskresultats__data__"):
+            query_data['field'] = "taskresultats"
         mfield = get_fields_from_path(model, query_data['field'])
         if not mfield:
             raise Exception('Field path "%s" could not be followed to a field'
@@ -151,9 +153,6 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
             date_from = date_to_string(query_data.get('value_from'))
             date_to = date_to_string(query_data.get('value_to'))
             query_data['value'] = ','.join([date_from, date_to])
-        elif isinstance(query_data.get('value'),
-                      list) and query_data['field'] == "taskresultats":
-            print(f"advanced_filters: {query_data['field']} with value {query_data['value']}")
 
         return query_data
 
